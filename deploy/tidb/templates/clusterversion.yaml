@@ -25,3 +25,6 @@ spec:
       - name: tidb
         image: {{ .Values.image.registry | default "docker.io" }}/{{ .Values.image.repository }}/tidb:{{ default .Chart.AppVersion .Values.image.tag }}
         imagePullPolicy: {{ default .Values.image.pullPolicy "IfNotPresent" }}
+      - name: slowlog
+        image: {{ .Values.image.helper.image }}
+        imagePullPolicy: {{ default .Values.image.helper.pullPolicy "IfNotPresent" }}
