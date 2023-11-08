@@ -19,3 +19,9 @@ spec:
       - name: tikv
         image: {{ .Values.image.registry | default "docker.io" }}/{{ .Values.image.repository }}/tikv:{{ default .Chart.AppVersion .Values.image.tag }}
         imagePullPolicy: {{ default .Values.image.pullPolicy "IfNotPresent" }}
+  - componentDefRef: tidb
+    versionsContext:
+      containers:
+      - name: tidb
+        image: {{ .Values.image.registry | default "docker.io" }}/{{ .Values.image.repository }}/tidb:{{ default .Chart.AppVersion .Values.image.tag }}
+        imagePullPolicy: {{ default .Values.image.pullPolicy "IfNotPresent" }}

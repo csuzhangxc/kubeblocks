@@ -5,12 +5,6 @@ metadata:
   labels:
     {{- include "tidb.labels" . | nindent 4 }}
 spec:
-  connectionCredential:
-    username: root
-    password: ""
-    endpoint: "$(SVC_FQDN):$(SVC_PORT_client)"
-    host: "$(SVC_FQDN)"
-    port: "$(SVC_PORT_client)"
   componentDefs:
     - name: pd
       characterType: tidb
@@ -95,3 +89,35 @@ spec:
                 --addr=0.0.0.0:20160 \
                 --advertise-addr=${KB_POD_FQDN}:20160 \
                 --status-addr=0.0.0.0:20180
+    - name: tidb
+      characterType: tidb
+      workloadType: Stateful
+      statefulSpec:
+        updateStrategy: BestEffortParallel
+      service:
+        ports:
+          - name: client
+            port: 4000
+            targetPort: client
+          - name: status
+            port: 10080
+            targetPort: status
+      podSpec:
+        containers:
+          - name: tidb
+            imagePullPolicy: IfNotPresent
+            ports:
+              - containerPort: 4000
+                name: client
+              - containerPort: 10080
+                name: status
+            command:
+              - bin/sh
+              - -c
+              - |
+                echo "start tidb..."
+                DOMAIN=$KB_NAMESPACE".svc{{ .Values.clusterDomain }}"
+                exec /tidb-server --store=tikv \
+                --advertise-address=${KB_POD_FQDN}:4000 \
+                --host=0.0.0.0 \
+                --path=${KB_CLUSTER_NAME}-pd.${DOMAIN}:2379
