@@ -13,3 +13,9 @@ spec:
       - name: pd
         image: {{ .Values.image.registry | default "docker.io" }}/{{ .Values.image.repository }}/pd:{{ default .Chart.AppVersion .Values.image.tag }}
         imagePullPolicy: {{ default .Values.image.pullPolicy "IfNotPresent" }}
+  - componentDefRef: tikv
+    versionsContext:
+      containers:
+      - name: tikv
+        image: {{ .Values.image.registry | default "docker.io" }}/{{ .Values.image.repository }}/tikv:{{ default .Chart.AppVersion .Values.image.tag }}
+        imagePullPolicy: {{ default .Values.image.pullPolicy "IfNotPresent" }}
